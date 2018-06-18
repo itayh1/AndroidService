@@ -50,5 +50,3 @@ C:\Users\Itay\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.pd
 C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.exe.config
 C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.exe
 C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.pdb
-C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\Newtonsoft.Json.dll
-C:\Users\Itay\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.csproj.CopyComplete

@@ -24,7 +24,7 @@ namespace ImageService
 
         public Communicator(ConfigurationData configData, LoggingService loggingS)
         {
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), this.server_port);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.22.128"), this.server_port);
             this.listener = new TcpListener(ep);
             this.loggingService = loggingS;
             this.Configurations = configData;
