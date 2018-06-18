@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace ImageService.Server
 {
@@ -31,7 +30,6 @@ namespace ImageService.Server
             this.m_logging = ils;
             this.handlers = new List<IDirectoryHandler>();
             this.communicator = com;
-            this.communicator.OnCommandRecieved += this.OnCommandRecieved;
             this.setHandlers(com.Configurations.Handlers.ToArray<string>());
         }
 
@@ -45,7 +43,6 @@ namespace ImageService.Server
                     {
                         IDirectoryHandler dir = new DirectoyHandler(this.m_controller, this.m_logging, handler);
                         dir.CommandRecieved += OnCommandRecieved;
-                        
                         dir.StartHandleDirectory(handler);
                         this.handlers.Add(dir);
                         this.m_logging.Log("An handler has been initialized, " + handler, MessageTypeEnum.INFO);
@@ -57,7 +54,6 @@ namespace ImageService.Server
                 }
             }
         }
-
         /*
          * The Event that will be activated upon new Command
          */
@@ -68,7 +64,6 @@ namespace ImageService.Server
             if (e.CommandID == (int)CommandEnum.CloseCommand)
             {
                 this.OnClosed(e.Args[0]);
-
             }
             // addFile command
             else
@@ -85,7 +80,6 @@ namespace ImageService.Server
                     typeEnum = MessageTypeEnum.FAIL;
                     this.m_logging.Log(msg, typeEnum);
                 }
-                this.BuildLogAndSendCommand(msg, typeEnum.ToString());
             }
         }
 
@@ -105,7 +99,6 @@ namespace ImageService.Server
                         // log creation and update all clients
                         message += "handler: " + path + " was closed";
                         string type = MessageTypeEnum.INFO.ToString();
-                        BuildLogAndSendCommand(message, type);
                         this.m_logging.Log(message, MessageTypeEnum.INFO);
 
                         // remove handler
@@ -116,9 +109,6 @@ namespace ImageService.Server
                         break;                      
                     }
                 }
-                // update all clients of which handler closed
-                communicator.SendCommandBroadCast(new CommandRecievedEventArgs((int)CommandEnum.CloseCommand, 
-                    new string[] { path }, String.Empty));
             }
             catch (Exception ex)
             {
@@ -126,16 +116,6 @@ namespace ImageService.Server
                     path, ex.Message.ToString()), MessageTypeEnum.FAIL);
             }
         }
-
-
-        private void BuildLogAndSendCommand(string message, string type)
-        {
-            LogObject newLog = new LogObject(type, message);
-            var serializedLog = JsonConvert.SerializeObject(newLog);
-            CommandRecievedEventArgs cmd = new CommandRecievedEventArgs((int)CommandEnum.LogCommand, new string[] { serializedLog }, String.Empty);
-            this.communicator.SendCommandBroadCast(cmd);
-        }
-
         /*
          * The function close the server
          */

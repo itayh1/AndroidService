@@ -97,7 +97,7 @@ namespace ImageService
                             tempBytes += bytesRead;
                         }
                         writer.Write("ok");
-                        File.WriteAllBytes(this.Configurations.Handlers[0] + @"\" + picName, bytes);
+                        File.WriteAllBytes(this.Configurations.Handlers[0] + @"\" + picName + ".png", bytes);
                     }
                     catch (Exception ex)
                     {
