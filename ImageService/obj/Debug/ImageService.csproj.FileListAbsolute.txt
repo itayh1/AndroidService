@@ -50,3 +50,13 @@ C:\Users\Itay\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.pd
 C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.exe.config
 C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.exe
 C:\Users\Itay\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.pdb
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.exe.config
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.exe
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\bin\Debug\ImageService.pdb
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.csprojResolveAssemblyReference.cache
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.ImageService.resources
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.ProjectInstaller.resources
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.csproj.GenerateResource.cache
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.csproj.CoreCompileInputs.cache
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.exe
+C:\Users\Omer Zucker\Source\Repos\AndroidService\ImageService\obj\Debug\ImageService.pdb

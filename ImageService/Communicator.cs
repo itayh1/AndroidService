@@ -15,7 +15,7 @@ namespace ImageService
     {
         private static Mutex mutex = new Mutex();
 
-        private readonly int server_port = 8888;
+        private readonly int server_port = 6000;
         private TcpListener listener;
         private List<TcpClient> clients;
         private LoggingService loggingService;
@@ -24,7 +24,7 @@ namespace ImageService
 
         public Communicator(ConfigurationData configData, LoggingService loggingS)
         {
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.22.128"), this.server_port);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), this.server_port);
             this.listener = new TcpListener(ep);
             this.loggingService = loggingS;
             this.Configurations = configData;
@@ -33,88 +33,85 @@ namespace ImageService
         public void Start()
         {
             this.listener.Start();
-            Console.WriteLine("Waiting for connections...");
 
-            //Task task = new Task(() =>
-            //{
-                while (true)
+            while (true)
+            {
+                try
                 {
-                    try
-                    {
-                        TcpClient client = this.listener.AcceptTcpClient();
-                        this.clients.Add(client);
-                        Console.WriteLine("New client connection");
-                        this.loggingService.Log(string.Format("Client with socket {0} connected", client.ToString()), MessageTypeEnum.INFO);
-                        HandleClient(client);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.Write(e.Message);
-                        break;
-                    }
+                    Console.WriteLine("Waiting for connections...");
+                    TcpClient client = this.listener.AcceptTcpClient();
+                    this.clients.Add(client);
+                    Console.WriteLine("New client connection");
+                    this.loggingService.Log(string.Format("Client with socket {0} connected", client.ToString()), MessageTypeEnum.INFO);
+                    HandleClient(client);
                 }
-                Console.WriteLine("Server stopped");
-           // });
-           // task.Start();
+                catch (Exception e)
+                {
+                    Console.Write(e.Message);
+                    break;
+                }
+            }
+            Console.WriteLine("Server stopped");
         }
 
         public void HandleClient(TcpClient client)
         {
+            bool running = true;
+            NetworkStream stream = client.GetStream();
+            BinaryReader reader = new BinaryReader(stream);
+            BinaryWriter writer = new BinaryWriter(stream);
+            string msg = string.Empty;
+            byte[] bytes = new byte[4096];
+            int bytesRead;
+            int picSize;
+            string picName;
 
-            Task task = new Task(() =>
+            while (running)
             {
-
-                bool running = true;
-                NetworkStream stream = client.GetStream();
-                BinaryReader reader = new BinaryReader(stream);
-                BinaryWriter writer = new BinaryWriter(stream);
-                string msg = string.Empty;
-                byte[] bytes = new byte[4096];
-                int bytesRead;
-                int picSize;
-                string picName;
-
-                while (running)
+                try
                 {
-                    try
-                    {
-                        //name 
-                        picName = reader.ReadString();
-                        //bytesRead = stream.Read(bytes, 0, bytes.Length);
-                        //picName = Encoding.ASCII.GetString(bytes, 0, bytesRead);
-                        //size
-                        msg = reader.ReadString();
-                        if (!int.TryParse(msg, out picSize)) break;
-                        bytes = new byte[picSize];
+                    //name 
+                    bytesRead = reader.Read(bytes, 0, bytes.Length);
+                    picName = Encoding.ASCII.GetString(bytes, 0, bytesRead);
+                    Console.WriteLine(picName);
+                    //size
 
-                        bytesRead = stream.Read(bytes, 0, bytes.Length);
-                        int tempBytes = bytesRead;
-                        //byte[] bytesCurrent;
-                        while (tempBytes < bytes.Length)
-                        {
-                            //bytesCurrent = new byte[int.Parse(picSize)];
-                            bytesRead = stream.Read(bytes, tempBytes, bytes.Length - tempBytes);
-                            tempBytes += bytesRead;
-                        }
-                        writer.Write("ok");
-                        File.WriteAllBytes(this.Configurations.Handlers[0] + @"\" + picName + ".png", bytes);
-                    }
-                    catch (Exception ex)
+                    writer.Write("ok for name");
+                    
+                    bytesRead = reader.Read(bytes, 0, bytes.Length);
+                    msg = Encoding.ASCII.GetString(bytes, 0, bytesRead);
+                    Console.WriteLine(msg);
+                    if (!int.TryParse(msg, out picSize)) break;
+                    bytes = new byte[picSize];
+
+                    writer.Write("ok for size");
+
+                    bytesRead = stream.Read(bytes, 0, bytes.Length);
+                    int tempBytes = bytesRead;
+
+                    while (tempBytes < bytes.Length)
                     {
-                        running = false;
-                        clients.Remove(client);
-                        Console.WriteLine(ex.Message);
+                        bytesRead = stream.Read(bytes, tempBytes, bytes.Length - tempBytes);
+                        tempBytes += bytesRead;
                     }
+                    writer.Write("ok for picture");
+
+                    File.WriteAllBytes(this.Configurations.Handlers[0] + @"\" + picName, bytes);
                 }
-                Console.WriteLine("closing client");
-            });
-            task.Start();
+                catch (Exception ex)
+                {
+                    running = false;
+                    clients.Remove(client);
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            Console.WriteLine("closing client");
         }
-        
+
         public void Close()
         {
             CommandRecievedEventArgs command = new CommandRecievedEventArgs((int)CommandEnum.ExitCommand, null, string.Empty);
-            // Send for every client to exit.
+            // Send for every client to exit
             listener.Stop();
         }
     }
